@@ -1,0 +1,24 @@
+.content {
+  padding: 0 30px;
+}
+
+.fab {
+  position: fixed;
+  bottom: 50px;
+  right: 50px;
+}
+
+.fabPhoto {
+  position: fixed;
+  bottom: 200px;
+  right: 50px;
+}
+
+.imageList {
+  margin-top: 10px;
+}
+.menu {
+  display: flex;
+  flex-direction:row;
+  justify-content : space-around;
+}

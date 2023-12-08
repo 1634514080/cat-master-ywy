@@ -1,0 +1,8 @@
+{
+  "description": "北京工业大学BJUT小动物观赏协会猫咪图鉴",
+  "projectname": "bjut-cats",
+  "setting": {
+    "compileHotReLoad": true,
+    "urlCheck": false
+  }
+}

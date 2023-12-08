@@ -1,0 +1,9 @@
+{
+  "miniprogramRoot": "./",
+  "projectname": "bjut-cats",
+  "appid": "wxa932a8008de3fd40",
+  "setting": {
+    "es6": false,
+    "minified": false
+  }
+}
