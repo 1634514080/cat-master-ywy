@@ -1,6 +1,6 @@
 import { useLoad, useShareAppMessage, useShareTimeline,navigateTo,request,showToast } from '@tarojs/taro';
-import { AtModal,AtFab,AtCurtain  } from 'taro-ui';
-import { useState } from 'react';
+import { AtModal,AtFab,AtCurtain,AtDivider,AtList,AtListItem  } from 'taro-ui';
+import { useRef, useState } from 'react';
 import { Image, Map, Text, View } from '@tarojs/components';
 import { removeDay } from '../../../utils/date';
 import style from './detail.module.css';
@@ -10,12 +10,15 @@ const defaultImg =
   'https://imgbed.codingkelvin.fun/uPic/placeholder345734852.jpg';
 
 function Detail() {
+  const api_host='http://10.26.52.26:8080'
   const [cat, setCat] = useState<Cat>({} as Cat);
   const [showStateMsg, setShowStateMsg] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
-  const [content, setContent] = useState(''); // 评论内容
-  const [comments, setComments] = useState([]); // 所有评论
-
+  const [name, setName] = useState('sym'); // 用户名
+    const [content, setContent] = useState('111'); // 评论内容
+    const newComment={name,content};
+    const [comments, setComments] = useState([newComment]); // 所有评论
+  const newcat = useRef<Cat>({} as Cat);
   useShareAppMessage(() => {
     return {
       title: `月亮湖猫屋-${cat.name}`,
@@ -38,28 +41,31 @@ function Detail() {
 
   useLoad((options) => {
     setCat(JSON.parse(decodeURIComponent(options.model)));
+    const nextcat=JSON.parse(decodeURIComponent(options.model));
+    setCat(nextcat);
+    newcat.current = nextcat;
+    console.log(newcat);
   });
 
-  useLoad(() => {
-    console.log('Index Page loaded.');
-    request({
-      url: `${API_HOST}/api/comments?id=${cat.name}`,
-      method: 'GET',
-      success: (res) => {
-        setComments(res)
-      },
-      fail: (res) => {
-        showToast({
-          title: res.errMsg,
-          icon: 'error',
-        });
-      },
-    });
-  });
-
-  const handleNavigate = () =>{
+  // useLoad(() => {
+  //   console.log('Index Page loaded.');
+  //   request({
+  //     url: `${API_HOST}/api/comments?id=${cat.name}`,
+  //     method: 'GET',
+  //     success: (res) => {
+  //       setComments(res)
+  //     },
+  //     fail: (res) => {
+  //       showToast({
+  //         title: res.errMsg,
+  //         icon: 'error',
+  //       });
+  //     },
+  //   });
+  // });
+  const handleNavigate = (options) =>{
     navigateTo({
-      url: `../write/write`,
+      url: `../write/write?id=${newcat.current.id}`,
     });
   }
   const handleNavigatetophoto =()=>{
@@ -68,6 +74,9 @@ function Detail() {
     });
   }
 
+  const handleFeed =()=>{
+
+  }
 
   return (
     <View className="content">
@@ -91,6 +100,9 @@ function Detail() {
         </AtFab>
         <AtFab onClick={handleNavigatetophoto}>
           <Text className='at-fab__icon at-icon at-icon-camera'></Text>
+        </AtFab>
+        <AtFab onClick={handleFeed}>
+          <Text className='at-fab__icon at-icon at-icon-heart'></Text>
         </AtFab>
         </View>
       </AtCurtain>
@@ -189,11 +201,21 @@ function Detail() {
               </View>
             )}
         </View>
+        {/* <AtDivider  fontColor="#bbb" />
+    <AtList>
+        {comments.map((comment, index) => (
+          <AtListItem
+            key={index}
+            title={comment.name}
+            note={comment.content}
+          />
+        ))}
+      </AtList> */}
       </View>
+    
       <AtFab className={style.fab} onClick= {() => setShowMenu(true)}>
         <Text className="at-fab__icon at-icon at-icon-add"></Text>
       </AtFab>
-      
     </View>
   );
 }

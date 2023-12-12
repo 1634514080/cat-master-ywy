@@ -37,8 +37,8 @@ export default defineAppConfig({
       {
         iconPath: './icon/about.png',
         selectedIconPath: './icon/about_selected.png',
-        pagePath: 'pages/write/write',
-        text: '关于',
+        pagePath: 'pages/userPage/userPage',
+        text: '个人',
       },
     ],
   },

@@ -8,12 +8,15 @@ import {
   navigateTo,
   useDidShow,
   stopPullDownRefresh,
+  useLoad,
+  request
 } from '@tarojs/taro';
 import { AtFab,AtCurtain } from 'taro-ui';
 import style from './gallery.module.css';
 import { requestAwait } from '../../../utils/await';
 import { API_HOST, signUp } from '../../../utils/db';
 import ImageItem from './components/ImageItem';
+import globalData from '../../../utils/globalData';
 
 function Gallery() {
   const [images, setImages] = useState<Image[]>([]);
@@ -53,11 +56,11 @@ function Gallery() {
     refreshLike();
   });
 
-  usePullDownRefresh(async () => {
-    await refreshImages();
-    await refreshLike();
-    stopPullDownRefresh();
-  });
+  // usePullDownRefresh(async () => {
+  //   await refreshImages();
+  //   await refreshLike();
+  //   stopPullDownRefresh();
+  // });
 
   useShareAppMessage(() => {
     return { title: '月亮湖猫屋-相册' };
@@ -86,6 +89,29 @@ function Gallery() {
       url: `../photo/photo`,
     });
   }
+  useLoad(() => {
+    request({
+      url: `http://10.26.52.26:8080/socialinfo/tweet`,
+      method: 'GET',
+      data:{
+        id:globalData.userInfo.id,
+      },
+      success: (res) => {
+        console.log("受到信息");
+        console.log(res.data);
+        res.data.data.filter((e) => e.imageurl != null).map((e)=>{
+          const n=globalData.userInfo.name;
+          const url = e.imageurl.replace("/api",'http://10.26.52.26:8080');
+          const newImage={openId:globalData.userInfo.id,imageUrl:url,catName:"小白",campus:"本部",state:"通过"};
+          setImages([...images,newImage]);
+          
+        })
+      },
+      fail: (res) => {
+        console.log(res.errMsg);
+      },
+    });
+  });
   return (
     <View className={style.content}>
       <AtCurtain isOpened={showMenu} onClose={()=>setShowMenu(false)}>
@@ -101,7 +127,6 @@ function Gallery() {
             <ImageItem
               image={image}
               key={image.imageUrl}
-              isLike={likes.includes(image.imageUrl)}
             />
           ))}
         </GridView>

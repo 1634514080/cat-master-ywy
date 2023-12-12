@@ -6,37 +6,17 @@ import { getUserFromDB, API_HOST, signUp } from '../../../../utils/db';
 import { requestAwait } from '../../../../utils/await';
 import likeIcon from '../../../icon/like.png';
 import likeFill from '../../../icon/like_fill.png';
+import globalData from '../../../../utils/globalData';
 
 interface Props {
   image: Image;
-  isLike: boolean;
 }
 
-function ImageItem({ image, isLike }: Props) {
-  const [userName, setUserName] = useState('');
-  const [like, setLike] = useState(isLike);
+function ImageItem({ image}: Props) {
+  console.log("土拍你");
+  console.log(image);
+  const [userName, setUserName] = useState(globalData.userInfo.name);
 
-  useEffect(() => {
-    (async () => {
-      const { data } = await getUserFromDB(image.openId);
-      setUserName(data.userName);
-    })();
-  }, []);
-
-  const handleLike = () => {
-    const openId: string = getStorageSync('openId');
-    // 先登录
-    if (openId == '') {
-      signUp(handleLike);
-      return;
-    }
-    // 已登陆
-    requestAwait('POST', `${API_HOST}/api/likes`, {
-      openId: image.openId,
-      imageUrl: image.imageUrl,
-    });
-    setLike(true);
-  };
 
   return (
     <View className={style.card}>
@@ -63,16 +43,6 @@ function ImageItem({ image, isLike }: Props) {
             className={style.catInfo}
           >{`${image.campus}/${image.catName}`}</Text>
         </View>
-        {like ? (
-          <Image src={likeFill} svg className={style.icon} />
-        ) : (
-          <Image
-            src={likeIcon}
-            svg
-            onClick={handleLike}
-            className={style.icon}
-          />
-        )}
       </View>
     </View>
   );
